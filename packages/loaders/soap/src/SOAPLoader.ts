@@ -408,6 +408,7 @@ export class SOAPLoader {
     this.getNamespaceDefinitions(definition.attributes.targetNamespace).push(definition);
     if (definition.attributes.soap12) {
       this.soapNamespace = 'http://www.w3.org/2003/05/soap-envelope';
+      // TODO: Add in the ContentType header with application/soap+xml
     }
     const definitionAliasMap = this.getAliasMapFromAttributes(definition.attributes);
     const definitionNamespace = definition.attributes.targetNamespace;

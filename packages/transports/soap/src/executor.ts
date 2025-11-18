@@ -122,6 +122,19 @@ function prefixWithAlias({
     const prefixedHeaderObj: Record<string, any> = {};
     for (const key in obj) {
       const aliasedKey = key === 'innerText' ? key : `${alias}:${key}`;
+      
+      const isArray = Array.isArray(obj[key]);			
+			if(isArray)
+			{
+				var temp = prefixWithAlias({
+                alias,
+                obj: obj[key],
+                resolverData,
+				});
+							
+				prefixedHeaderObj[aliasedKey.slice(0,-1)] = Object.values(temp);
+				continue;
+			}
       prefixedHeaderObj[aliasedKey] = prefixWithAlias({
         alias,
         obj: obj[key],
@@ -276,6 +289,7 @@ function createRootValue(
     attributeNamePrefix: '',
     attributesGroupName: 'attributes',
     textNodeName: 'innerText',
+    oneListGroup:"true",
   });
   const xmlToJSONConverter = new XMLParser(parseXmlOptions);
 

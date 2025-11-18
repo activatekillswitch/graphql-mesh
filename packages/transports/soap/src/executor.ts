@@ -177,6 +177,27 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       env: process.env,
     };
 
+	// TODO: This is a botch to get InTime working - Will need to somehow be done dynamically
+	const key = Object.keys(args)[0];
+	let value = args[key];
+	
+	// If Mesh gives a primitive (string/number/etc) replace it with an object
+	if (typeof value !== 'object' || value === null) {
+		value = {};
+	}
+	
+	// Clone using Object.assign to avoid prototype issues
+	const cloned = Object.assign({}, value);
+	
+	// Insert token FIRST
+	const newValue = {
+		token: process.env['InTime_Token'],
+		...cloned,
+	};
+	
+	args[key] = newValue;
+	// END BOTCH
+
     const bodyPrefix = soapAnnotations.bodyAlias || 'body';
     envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
 
@@ -215,7 +236,8 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
         method: 'POST',
         body: requestXML,
         headers: {
-          'Content-Type': 'text/xml; charset=utf-8',
+			// TODO: This needs to be dynamic, to match SOAP1.1 or 1.2
+          'Content-Type': 'application/soap+xml; charset=utf-8',
           SOAPAction: soapAnnotations.soapAction,
           ...operationHeadersFactory({
             args,

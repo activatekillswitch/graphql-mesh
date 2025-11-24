@@ -525,7 +525,7 @@ async function handleTableForeignName({
   const foreignWhereInputName = sanitizeNameForGraphQL(foreignTableName + '_WhereInput');
   const foreignOrderByInputName = sanitizeNameForGraphQL(foreignTableName + '_OrderByInput');
   tableTC.addFields({
-    [foreignTableName]: {
+    [columnName + ' ' + foreignTableName]: {
       type: '[' + foreignObjectTypeName + ']',
       args: {
         where: {

@@ -424,7 +424,17 @@ export function addHTTPRootFieldResolver(
     operationLogger.debug(`Returning `, responseJson);
     // Sometimes API returns an array but the return type is not an array
     const isListReturnType = isListTypeOrNonNullListType(field.type);
-    const isArrayResponse = Array.isArray(responseJson);
+    var isArrayResponse = Array.isArray(responseJson);
+
+    if (isListReturnType && !isArrayResponse) {
+            operationLogger.debug(`Response is not array but return type is list. Normalizing the response`);
+            operationLogger.debug(`Dealing with results object`);
+            if (responseJson.results) {
+                responseJson = responseJson.results;
+                isArrayResponse = Array.isArray(responseJson);
+            }
+        }
+    
     if (isListReturnType && !isArrayResponse) {
       operationLogger.debug(
         `Response is not array but return type is list. Normalizing the response`,

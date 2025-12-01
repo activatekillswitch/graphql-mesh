@@ -110,6 +110,14 @@ export function addHTTPRootFieldResolver(
     queryParams: globalQueryParams,
   }: GlobalOptions,
 ) {
+
+  // Helper to extract selected fields from GraphQL info
+  function getSelectedFields(info) {
+      const fieldNodes = info.fieldNodes || [];
+      const selections = fieldNodes[0]?.selectionSet?.selections || [];
+      return selections.map(sel => sel.name.value);
+  }
+  
   globalQueryStringOptions = {
     ...defaultQsOptions,
     ...globalQueryStringOptions,
@@ -311,6 +319,13 @@ export function addHTTPRootFieldResolver(
           fullPath += queryParamsString;
         }
       }
+    }
+    
+    // Add "select" parameter for field selection filtering
+    const selectedFields = getSelectedFields(info);
+    if (selectedFields.length > 0) {
+        fullPath += fullPath.includes('?') ? '&' : '?';
+        fullPath += `$select=${selectedFields.join(',')}`;
     }
 
     if (jsonApiFields) {
